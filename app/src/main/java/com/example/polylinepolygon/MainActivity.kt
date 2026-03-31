@@ -41,14 +41,16 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapScreen() {
-    val easternTrail = LatLng(44.34336,-68.24686)
+    // park location
+    val acadiaNationalPark = LatLng(44.34336,-68.24686)
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.Builder()
-            .target(easternTrail)
+            .target(acadiaNationalPark)
             .zoom(12f)
             .build()
     }
 
+    // list of points defining hiking trail polyline
     val cadillacTrailPoints = listOf(
         LatLng(44.37851, -68.22968),
         LatLng(44.37779, -68.22898),
@@ -85,6 +87,7 @@ fun MapScreen() {
         LatLng(44.35305, -68.22534)
     )
 
+    // list of points defining park polygon
     val acadiaMountDesertIsland = listOf(
         LatLng(44.41421, -68.27994),
         LatLng(44.41342, -68.25225),
@@ -114,11 +117,13 @@ fun MapScreen() {
         LatLng(44.41421, -68.27994),
     )
 
+    // various states of features
     var hue by rememberSaveable{ mutableStateOf(0f) }
     var width by rememberSaveable{ mutableStateOf(90f) }
     var showAlert by rememberSaveable{ mutableStateOf(false) }
     var alertMessage by rememberSaveable{ mutableStateOf("") }
 
+    // user customization
     val color = Color.hsv(
         hue = hue,
         saturation = 1f,
@@ -131,6 +136,7 @@ fun MapScreen() {
             modifier = Modifier.fillMaxSize(),
             cameraPositionState = cameraPositionState
         ) {
+            // trail
             Polyline(
                 points = cadillacTrailPoints,
                 color = color,
@@ -141,6 +147,7 @@ fun MapScreen() {
                     showAlert = true
                 }
             )
+            // park
             Polygon(
                 points = acadiaMountDesertIsland,
                 strokeColor = color,
@@ -153,12 +160,14 @@ fun MapScreen() {
                 }
             )
         }
+        // user customizing components
         Column(
             modifier = Modifier.padding(42.dp)
         ) {
             SliderCard("Hue", hue, {newVal -> hue = newVal})
             SliderCard("Width", width, {newVal -> width = newVal})
         }
+        // show info alert
         if (showAlert) {
             AlertDialog(
                 onDismissRequest = { showAlert = false },
@@ -175,6 +184,7 @@ fun MapScreen() {
     }
 }
 
+// custom slider component
 @Composable
 fun SliderCard(text: String, value: Float, onChange: (Float) -> Unit) {
     Text(text = text)
